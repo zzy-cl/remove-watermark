@@ -138,12 +138,10 @@ function submitBtn() {
                         grouping: true,
                         center: true
                     })
-                    console.log(response.data)
                     if (response.data.code === 200) {
                         videoInfo.value = response.data.data
                         typeInfo.value = 'video'
                     }
-                    console.log(videoInfo.value)
                     loading.value = false
                 })
                 .catch(function (error) {
@@ -159,12 +157,10 @@ function submitBtn() {
                         grouping: true,
                         center: true
                     })
-                    console.log(response.data)
                     if (response.data.code === 200) {
                         atlasInfo.value = response.data.data
                         typeInfo.value = 'atlas'
                     }
-                    console.log(atlasInfo.value)
                     loading.value = false
                 })
                 .catch(function (error) {
@@ -195,12 +191,10 @@ function downloadVideo(type) {
 
 function downloadAtlas() {
     if (imageList.value.length === 0) {
-        console.log('下载全部')
         for (let i = 0; i < atlasInfo.value.images.length; i++) {
             saveAs(atlasInfo.value.images[i])
         }
     } else {
-        console.log(imageList.value)
         for (let i = 0; i < imageList.value.length; i++) {
             saveAs(atlasInfo.value.images[imageList.value[i]])
         }
