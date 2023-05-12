@@ -4,3 +4,5 @@
 <script setup>
 import MainPage from "@/components/mainPage.vue";
 </script>
+<style scoped>
+</style>

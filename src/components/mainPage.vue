@@ -29,7 +29,7 @@
                     show-icon
             />
         </div>
-        <div class="box-input">
+        <div class="box-input" v-loading="loading">
             <el-input
                     v-model="urlInfo.url"
                     placeholder="请输入解析链接"
@@ -47,7 +47,7 @@
                 </template>
             </el-input>
         </div>
-        <div class="box-info" v-loading="loading">
+        <div class="box-info">
             <el-empty description="没有信息" v-if="typeInfo==='empty'"/>
             <div v-else-if="typeInfo==='video'">
                 <div class="btn-group">
@@ -90,7 +90,8 @@
                     <el-button type="success" @click="downloadAtlas">点击下载</el-button>
                 </div>
                 <div class="box-image">
-                    <el-image style="height: 200px;margin: 5px 0" v-for="url in atlasInfo.images" :key="url" :src="url"
+                    <el-image style="height: 200px;margin: 5px 0" v-for="url in atlasInfo.images" :key="url"
+                              :src="url"
                               lazy/>
                 </div>
             </div>
@@ -210,7 +211,7 @@ function downloadAtlas() {
 
 <style scoped>
 .box-card {
-    width: 100%;
+    width: 96%;
     border-radius: 20px;
 }
 
