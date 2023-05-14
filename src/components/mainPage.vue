@@ -83,7 +83,7 @@
                         <el-option
                                 v-for="(item,index) in atlasInfo.images"
                                 :key="item.value"
-                                :label="index"
+                                :label="index+1"
                                 :value="index"
                         />
                     </el-select>
@@ -104,6 +104,7 @@ import {ref} from "vue";
 import {ElMessage} from "element-plus";
 import axios from "axios";
 import {saveAs} from 'file-saver';
+
 // 定义变量
 let urlInfo = ref({
     urlType: 'video',
@@ -139,7 +140,9 @@ function submitBtn() {
                         center: true
                     })
                     if (response.data.code === 200) {
-                        videoInfo.value = response.data.data
+                        for (let key in response.data.data) {
+                            videoInfo.value[key] = response.data.data[key]
+                        }
                         typeInfo.value = 'video'
                     }
                     loading.value = false
@@ -181,22 +184,26 @@ function submitBtn() {
 
 function downloadVideo(type) {
     if (type === 'video') {
-        saveAs(videoInfo.value.url)
+        let hostType = videoInfo.value.url.indexOf('v3') !== -1 ? 'v3' : 'v5'
+        let videoUrl = videoInfo.value.url.match(/(?<=com\/)\S*/g)[0]
+        axios(`/${hostType}/${videoUrl}`, {
+            responseType: 'blob'
+        }).then(res => saveAs(res.data, 'video.mp4'))
     } else if (type === 'cover') {
-        saveAs(videoInfo.value.cover)
+        saveAs(videoInfo.value.cover, 'cover.png')
     } else {
-        saveAs(videoInfo.value.music.url)
+        saveAs(videoInfo.value.music.url, 'music.mp3')
     }
 }
 
 function downloadAtlas() {
     if (imageList.value.length === 0) {
         for (let i = 0; i < atlasInfo.value.images.length; i++) {
-            saveAs(atlasInfo.value.images[i])
+            saveAs(atlasInfo.value.images[i], `${i + 1}.png`)
         }
     } else {
         for (let i = 0; i < imageList.value.length; i++) {
-            saveAs(atlasInfo.value.images[imageList.value[i]])
+            saveAs(atlasInfo.value.images[imageList.value[i]], `${imageList.value[i] + 1}.png`)
         }
         imageList.value = []
     }
