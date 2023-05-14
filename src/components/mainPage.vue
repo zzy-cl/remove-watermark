@@ -212,7 +212,7 @@ function downloadAtlas() {
 
 <style scoped>
 .box-card {
-    width: 96%;
+    width: 100%;
     border-radius: 20px;
 }
 
