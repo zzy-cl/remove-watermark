@@ -158,7 +158,7 @@ function downloadVideo(type) {
     let fileName = 'video.mp4'
     let url = videoInfo.value.video
     if (type === 'video') {
-        fileName = video.mp4
+        fileName = 'video.mp4'
         url = videoInfo.value.video
     } else if (type === 'cover') {
         fileName = 'cover.png'
