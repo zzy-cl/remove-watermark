@@ -17,23 +17,17 @@ export default defineConfig({
             }
         }
     }, server: {
-        proxy: {
-            '/videos': {
-                target: 'https://api.zhaozeyu.top/v1/videos',
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/videos/, ''),
-                // headers: {
-                //     Referer: 'https://api.zhaozeyu.top/v1/videos', Origin: 'https://api.zhaozeyu.top/v1/videos'
-                // }
-            },
-            '/download': {
-                target: 'https://api.zhaozeyu.top/v1/download',
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/download/, ''),
-                // headers: {
-                //     Host: 'api.zhaozeyu.top'
-                // }
-            }
-        }
+        // proxy: {
+        //     '/videos': {
+        //         target: 'https://api.zhaozeyu.top/v1/videos',
+        //         changeOrigin: true,
+        //         rewrite: (path) => path.replace(/^\/videos/, '')
+        //     },
+        //     '/download': {
+        //         target: 'https://api.zhaozeyu.top/v1/download',
+        //         changeOrigin: true,
+        //         rewrite: (path) => path.replace(/^\/download/, '')
+        //     }
+        // }
     }
 })

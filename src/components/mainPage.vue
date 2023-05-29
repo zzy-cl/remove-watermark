@@ -100,7 +100,7 @@ function submitBtn() {
         if (urlInfo.value.urlType === 'video') {
             axios({
                 method: 'get',
-                url: '/videos',
+                url: 'https://api.zhaozeyu.top/v1/videos',
                 params: { url: url }
             })
                 .then(function (response) {
@@ -169,7 +169,7 @@ function downloadVideo(type) {
     }
     axios({
         method: 'post',
-        url: '/download',
+        url: 'https://api.zhaozeyu.top/v1/download',
         data: {
             url: url
         },
