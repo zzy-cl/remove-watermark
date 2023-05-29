@@ -1,5 +1,5 @@
-import {fileURLToPath, URL} from 'node:url'
-import {defineConfig} from 'vite'
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
@@ -18,20 +18,21 @@ export default defineConfig({
         }
     }, server: {
         proxy: {
-            '/v3': {
-                target: 'https://v3-dy-o.zjcdn.com',
+            '/videos': {
+                target: 'https://api.zhaozeyu.top/v1/videos',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/v3/, ''),
-                headers: {
-                    Referer: 'https://v3-dy-o.zjcdn.com', Origin: 'https://v3-dy-o.zjcdn.com'
-                }
-            }, '/v5': {
-                target: 'https://v5-dy-o.zjcdn.com',
+                rewrite: (path) => path.replace(/^\/videos/, ''),
+                // headers: {
+                //     Referer: 'https://api.zhaozeyu.top/v1/videos', Origin: 'https://api.zhaozeyu.top/v1/videos'
+                // }
+            },
+            '/download': {
+                target: 'https://api.zhaozeyu.top/v1/download',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/v5/, ''),
-                headers: {
-                    Referer: 'https://v5-dy-o.zjcdn.com', Origin: 'https://v5-dy-o.zjcdn.com'
-                }
+                rewrite: (path) => path.replace(/^\/download/, ''),
+                // headers: {
+                //     Host: 'api.zhaozeyu.top'
+                // }
             }
         }
     }
