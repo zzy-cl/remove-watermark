@@ -167,13 +167,13 @@ function downloadVideo(type) {
     let fileName = 'video.mp4'
     let url = videoInfo.value.video
     if (type === 'video') {
-        fileName = 'video.mp4'
+        fileName = `video${Date.now()}.mp4`
         url = videoInfo.value.video
     } else if (type === 'cover') {
-        fileName = 'cover.png'
+        fileName = `cover${Date.now()}.png`
         url = videoInfo.value.cover
     } else {
-        fileName = 'music.mp3'
+        fileName = `music${Date.now()}.mp3`
         url = videoInfo.value.music
     }
     axios({
@@ -194,11 +194,11 @@ function downloadVideo(type) {
 function downloadAtlas() {
     if (imageList.value.length === 0) {
         for (let i = 0; i < atlasInfo.value.images.length; i++) {
-            saveAs(atlasInfo.value.images[i], `${i + 1}.png`)
+            saveAs(atlasInfo.value.images[i], `image${Date.now()}.png`)
         }
     } else {
         for (let i = 0; i < imageList.value.length; i++) {
-            saveAs(atlasInfo.value.images[imageList.value[i]], `${imageList.value[i] + 1}.png`)
+            saveAs(atlasInfo.value.images[imageList.value[i]], `image${Date.now()}.png`)
         }
         imageList.value = []
     }
