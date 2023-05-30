@@ -1,7 +1,7 @@
 <template>
     <el-card class="box-card">
         <div class="author-info flex">
-            <el-avatar :size="100" :src="videoInfo.avatar" />
+            <el-avatar :size="100" :src="videoInfo.avatar || atlasInfo.avatar" />
         </div>
         <div class="box-message flex">
             <el-alert class="alert" title="本站公告" type="info" :closable="false"
@@ -80,13 +80,17 @@ let urlInfo = ref({
 let videoInfo = ref({
     title: '', // 标题
     author: '', // 作者
-    avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png', // 头像链接
+    avatar: '', // 头像链接
     cover: '', // 封面链接
     music: '', // 音乐链接
     video: '' // 视频链接
 })
 let atlasInfo = ref({
-    count: 0,
+    title: '', // 标题
+    author: '', // 作者
+    avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png', // 头像链接
+    cover: '', // 封面链接
+    music: '', // 音乐链接
     images: []
 })
 let loading = ref(false)
@@ -123,16 +127,21 @@ function submitBtn() {
                     console.log(error);
                 });
         } else {
-            axios.post(`https://tenapi.cn/v2/images?url=${urlInfo.value.url}`,)
+            axios({
+                method: 'get',
+                url: 'https://api.zhaozeyu.top/v1/images',
+                params: { url: url }
+            })
                 .then(function (response) {
                     ElMessage({
-                        type: response.data.code === 200 ? 'success' : response.data.code === 201 ? 'error' : 'info',
-                        message: response.data.msg,
+                        type: response.data.code === 0 ? 'success' : response.data.code === 1 ? 'error' : 'info',
+                        message: response.data.message,
                         showClose: true,
                         grouping: true,
                         center: true
                     })
-                    if (response.data.code === 200) {
+                    if (response.data.code === 0) {
+                        // 获取图片数组
                         atlasInfo.value = response.data.data
                         typeInfo.value = 'atlas'
                     }
