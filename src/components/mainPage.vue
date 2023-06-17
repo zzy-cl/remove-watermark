@@ -150,7 +150,7 @@ function getStream(url) {
 
 <style scoped>
 .box {
-  width: 98%;
+  width: 100%;
   padding: 20px;
   border: 1px gray solid;
   border-radius: 20px;
@@ -172,6 +172,7 @@ function getStream(url) {
 .video {
   max-width: 600px;
   max-height: 400px;
+  border-radius: 20px;
 }
 
 .box-btn {
@@ -189,7 +190,7 @@ function getStream(url) {
 
 @media (max-width: 900px) {
   .video {
-    width: 350px;
+    width: 100%;
   }
 }
 </style>
