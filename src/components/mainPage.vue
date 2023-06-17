@@ -112,20 +112,17 @@ async function downloadFile(url, type) {
   if (type === 'video') {
     saveAs(fileBlob.value, `${Date.now()}.mp4`)
   } else if (type === 'cover') {
-    dataForm.value.cover = dataForm.value.cover.replace(/http:/, 'https:')
-    saveAs(dataForm.value.cover, `${Date.now()}.png`)
+    saveAs(dataForm.value.cover.replace(/http:/, 'https:'), `${Date.now()}.png`)
   } else if (type === 'music') {
     saveAs(dataForm.value.music, `${Date.now()}.mp3`)
   } else if (type === 'images') {
     if (imageList.value.length === 0) {
       for (let i = 0; i < dataForm.value.images.length; i++) {
-        dataForm.value.images[i] = dataForm.value.images[i].replace(/http:/, 'https:')
-        saveAs(dataForm.value.images[i], `image${Date.now()}.png`)
+        saveAs(dataForm.value.images[i].replace(/http:/, 'https:'), `${Date.now()}.png`)
       }
     } else {
       for (let i = 0; i < imageList.value.length; i++) {
-        dataForm.value.images[i] = dataForm.value.images[i].replace(/http:/, 'https:')
-        saveAs(dataForm.value.images[imageList.value[i]], `image${Date.now()}.png`)
+        saveAs(dataForm.value.images[imageList.value[i]].replace(/http:/, 'https:'), `${Date.now()}.png`)
       }
       imageList.value = []
     }
