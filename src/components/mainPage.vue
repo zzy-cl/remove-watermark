@@ -118,6 +118,7 @@ async function downloadFile(url, type) {
   } else if (type === 'images') {
     if (imageList.value.length === 0) {
       for (let i = 0; i < dataForm.value.images.length; i++) {
+        dataForm.value.images[i] = dataForm.value.images[i].replace(/http:/, 'https:')
         saveAs(dataForm.value.images[i], `image${Date.now()}.png`)
       }
     } else {
