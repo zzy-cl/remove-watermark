@@ -33,7 +33,7 @@
     </div>
     <div class="box-images flex" v-else-if="flag.type==='images'">
       <div class="btn-group">
-        <el-select v-model="imageList" multiple collapse-tags placeholder="不选则默认下载全部" style="width: 240px">
+        <el-select v-model="imageList" multiple collapse-tags placeholder="不选则默认下载全部">
           <el-option v-for="(item, index) in dataForm.images" :key="item.value" :label="index + 1"
                      :value="index"/>
         </el-select>
@@ -190,7 +190,7 @@ function getStream(url) {
 
 @media (max-width: 900px) {
   .video {
-    width: 100%;
+    width: 96%;
   }
 }
 </style>
