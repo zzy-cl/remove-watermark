@@ -1,237 +1,195 @@
 <template>
-    <el-card class="box-card">
-        <div class="author-info flex">
-            <el-avatar :size="100" :src="videoInfo.avatar || atlasInfo.avatar" />
-        </div>
-        <div class="box-message flex">
-            <el-alert class="alert" title="本站公告" type="info" :closable="false"
-                description="图集解析仅抖音/快手/微博/皮皮虾/最右/皮皮搞笑可用，哔哩哔哩/6间房/微博仅支持下载无法去除水印，解析失败请 留言反馈" show-icon />
-            <el-alert class="alert" title="目前支持 " type="success" :closable="false"
-                description="皮皮虾/抖音/微视/快手/6间房/哔哩哔哩/微博/绿洲/度小视/开眼/陌陌/皮皮搞笑/全民k歌/逗拍/虎牙/新片场/哔哩哔哩/Acfun/美拍/西瓜视频/火山小视频/网易云Mlog/好看视频"
-                show-icon />
-            <el-alert class="alert" title="温馨提示" type="warning" :closable="false"
-                description="粘贴视频地址时无需删除文案 但如果视频链接正确但解析失败请删掉文案后重试" show-icon />
-        </div>
-        <div class="box-input" v-loading="loading">
-            <el-input v-model="urlInfo.url" placeholder="请输入解析链接" size="large" class="input-with-select">
-                <template #prepend>
-                    <el-select v-model="urlInfo.urlType" placeholder="Select" size="large" style="width: 80px">
-                        <el-option label="视频" value="video" />
-                        <el-option label="图集" value="atlas" />
-                    </el-select>
-                </template>
-                <template #append>
-                    <el-button @click="submitBtn">解析</el-button>
-                </template>
-            </el-input>
-        </div>
-        <div class="box-info">
-            <el-empty description="没有信息" v-if="typeInfo === 'empty'" />
-            <div v-else-if="typeInfo === 'video'">
-                <div class="btn-group">
-                    <el-button type="success" round @click="downloadVideo('video')">下载视频</el-button>
-                    <el-button type="success" round @click="downloadVideo('cover')">下载封面</el-button>
-                    <el-button type="success" round @click="downloadVideo('music')">下载音乐</el-button>
-                </div>
-                <el-input v-model="videoInfo.title" placeholder="">
-                    <template #prepend>视频标题</template>
-                </el-input>
-                <el-input v-model="videoInfo.author" placeholder="">
-                    <template #prepend>视频作者</template>
-                </el-input>
-                <el-input v-model="videoInfo.cover" placeholder="">
-                    <template #prepend>封面链接</template>
-                </el-input>
-                <el-input v-model="videoInfo.video" placeholder="">
-                    <template #prepend>视频链接</template>
-                </el-input>
-                <el-input v-model="videoInfo.music" placeholder="">
-                    <template #prepend>音乐链接</template>
-                </el-input>
-            </div>
-            <div v-else>
-                <div class="btn-group">
-                    <el-select v-model="imageList" multiple collapse-tags placeholder="不选则默认下载全部" style="width: 240px">
-                        <el-option v-for="(item, index) in atlasInfo.images" :key="item.value" :label="index + 1"
-                            :value="index" />
-                    </el-select>
-                    <el-button type="success" @click="downloadAtlas">点击下载</el-button>
-                </div>
-                <div class="box-image">
-                    <el-image style="height: 200px;margin: 5px 0" v-for="url in atlasInfo.images" :key="url" :src="url"
-                        lazy />
-                </div>
-            </div>
-        </div>
-    </el-card>
+  <div class="box flex">
+    <el-avatar :size="100" :src="dataForm.avatar" alt="头像"/>
+    <div class="box-message flex">
+      <el-alert class="alert" title="本站公告" type="info" :closable="false"
+                description="此页面为呓语API的测试页面，接口和页面不具有稳定性，随时存在变动。如果您想使用呓语API，请搭建自己的页面，切勿使用此页面作为嵌入页面。如有问题请联系站长。"
+                show-icon/>
+      <el-alert class="alert" title="目前支持 " type="success" :closable="false"
+                description="抖音/快手/皮皮虾/最右"
+                show-icon/>
+      <el-alert class="alert" title="温馨提示" type="warning" :closable="false"
+                description="粘贴视频地址时无需删除文案 但如果视频链接正确但解析失败请删掉文案后重试" show-icon/>
+    </div>
+    <el-input
+        class="box-input"
+        v-model="shortVideoUrl"
+        placeholder="请粘贴分享链接"
+        v-loading="flag.loading"
+    >
+      <template #append>
+        <el-button @click="getDataForm">解析</el-button>
+      </template>
+    </el-input>
+    <div class="box-videos flex" v-if="flag.type==='videos'">
+      <div class="box-btn">
+        <el-button @click="downloadFile(dataForm.video,'video')">下载视频</el-button>
+        <el-button @click="downloadFile(dataForm.cover,'cover')" :disabled="dataForm.cover==='无'">下载封面</el-button>
+        <el-button @click="downloadFile(dataForm.music,'music')" :disabled="dataForm.music==='无'">下载音乐</el-button>
+      </div>
+      <video class="video" controls width="600">
+        <source :src="dataForm.video" type="">
+      </video>
+    </div>
+    <div class="box-images flex" v-else-if="flag.type==='images'">
+      <div class="btn-group">
+        <el-select v-model="imageList" multiple collapse-tags placeholder="不选则默认下载全部" style="width: 240px">
+          <el-option v-for="(item, index) in dataForm.images" :key="item.value" :label="index + 1"
+                     :value="index"/>
+        </el-select>
+        <el-button style="margin: 20px 0" type="success" @click="downloadFile('','images')">下载</el-button>
+      </div>
+      <div class="images">
+        <el-image style="height: 200px;margin: 5px" v-for="(item,index) in dataForm.images" :src="item" :alt="index"
+                  lazy/>
+      </div>
+    </div>
+    <el-empty v-else description="空空如也"/>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { ElMessage } from "element-plus";
+import {ref} from "vue";
 import axios from "axios";
-import { saveAs } from 'file-saver';
+import {ElMessage} from "element-plus";
+import {saveAs} from 'file-saver';
 
 // 定义变量
-let urlInfo = ref({
-    urlType: 'video',
-    url: ''
+let shortVideoUrl = ref('')
+let imageList = ref(null)
+let fileBlob = ref(null)
+let flag = ref({
+  loading: false,
+  type: ''
 })
-let videoInfo = ref({
-    title: '', // 标题
-    author: '', // 作者
-    avatar: '', // 头像链接
-    cover: '', // 封面链接
-    music: '', // 音乐链接
-    video: '' // 视频链接
+let dataForm = ref({
+  title: '',
+  author: '',
+  avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+  cover: '',
+  music: '',
+  video: '',
+  images: null
 })
-let atlasInfo = ref({
-    title: '', // 标题
-    author: '', // 作者
-    avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png', // 头像链接
-    cover: '', // 封面链接
-    music: '', // 音乐链接
-    images: []
-})
-let loading = ref(false)
-let typeInfo = ref('empty')
-let imageList = ref([])
 
-function submitBtn() {
-    loading.value = true
-    if (urlInfo.value.url !== '') {
-        let url = urlInfo.value.url.match(/https:\/\/\S*/g)[0];
-        if (urlInfo.value.urlType === 'video') {
-            axios({
-                method: 'get',
-                url: 'https://api.zhaozeyu.top/v1/videos',
-                params: { url: url }
-            })
-                .then(function (response) {
-                    ElMessage({
-                        type: response.data.code === 0 ? 'success' : response.data.code === 1 ? 'error' : 'info',
-                        message: response.data.message,
-                        showClose: true,
-                        grouping: true,
-                        center: true
-                    })
-                    if (response.data.code === 0) {
-                        for (let key in response.data.data) {
-                            videoInfo.value[key] = response.data.data[key]
-                        }
-                        typeInfo.value = 'video'
-                    }
-                    loading.value = false
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        } else {
-            axios({
-                method: 'get',
-                url: 'https://api.zhaozeyu.top/v1/images',
-                params: { url: url }
-            })
-                .then(function (response) {
-                    ElMessage({
-                        type: response.data.code === 0 ? 'success' : response.data.code === 1 ? 'error' : 'info',
-                        message: response.data.message,
-                        showClose: true,
-                        grouping: true,
-                        center: true
-                    })
-                    if (response.data.code === 0) {
-                        // 获取图片数组
-                        atlasInfo.value = response.data.data
-                        typeInfo.value = 'atlas'
-                    }
-                    loading.value = false
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        }
-    } else {
-        ElMessage({
-            type: 'error',
-            message: '请输入解析链接',
-            showClose: true,
-            grouping: true,
-            center: true
-        })
-        loading.value = true
+async function getDataForm() {
+  flag.value.loading = true
+  await axios({
+    method: 'get',
+    url: 'https://api.zhaozeyu.top/v1/short-video',
+    params: {url: shortVideoUrl.value}
+  }).then(async res => {
+    if (res.data.code === 0) {
+      dataForm.value = res.data.data
+      if (dataForm.value.video) {
+        fileBlob.value = await getStream(dataForm.value.video)
+        dataForm.value.video = window.URL.createObjectURL(fileBlob.value)
+        flag.value.type = 'videos'
+      } else {
+        flag.value.type = 'images'
+      }
     }
-}
-
-function downloadVideo(type) {
-    let fileName = 'video.mp4'
-    let url = videoInfo.value.video
-    if (type === 'video') {
-        fileName = `video${Date.now()}.mp4`
-        url = videoInfo.value.video
-    } else if (type === 'cover') {
-        fileName = `cover${Date.now()}.png`
-        url = videoInfo.value.cover
-    } else {
-        fileName = `music${Date.now()}.mp3`
-        url = videoInfo.value.music
-    }
-    axios({
-        method: 'post',
-        url: 'https://api.zhaozeyu.top/v1/download',
-        data: {
-            url: url
-        },
-        responseType: 'blob'
-    }).then(res => {
-        saveAs(res.data, fileName)
-    }).catch(err => {
-        console.log(err)
-        saveAs(url, fileName)
+    ElMessage({
+      type: res.data.code === 0 ? 'success' : 'error',
+      message: res.data.message,
+      showClose: true,
+      grouping: true,
+      center: true
     })
+  }).catch(err => {
+    console.log(err)
+    ElMessage.error({
+      message: '解析失败，请稍后再试',
+      showClose: true,
+      grouping: true,
+      center: true
+    })
+  })
+  flag.value.loading = false
 }
 
-function downloadAtlas() {
+async function downloadFile(url, type) {
+  if (type === 'video') {
+    saveAs(fileBlob.value, `${Date.now()}.mp4`)
+  } else if (type === 'cover') {
+    saveAs(dataForm.value.cover, `${Date.now()}.png`)
+  } else if (type === 'music') {
+    saveAs(dataForm.value.music, `${Date.now()}.mp3`)
+  } else if (type === 'images') {
     if (imageList.value.length === 0) {
-        for (let i = 0; i < atlasInfo.value.images.length; i++) {
-            saveAs(atlasInfo.value.images[i], `image${Date.now()}.png`)
-        }
+      for (let i = 0; i < dataForm.value.images.length; i++) {
+        saveAs(dataForm.value.images[i], `image${Date.now()}.png`)
+      }
     } else {
-        for (let i = 0; i < imageList.value.length; i++) {
-            saveAs(atlasInfo.value.images[imageList.value[i]], `image${Date.now()}.png`)
-        }
-        imageList.value = []
+      for (let i = 0; i < imageList.value.length; i++) {
+        saveAs(dataForm.value.images[imageList.value[i]], `image${Date.now()}.png`)
+      }
+      imageList.value = []
     }
+  } else {
+    ElMessage.error({
+      message: '下载失败，请稍后再试',
+      showClose: true,
+      grouping: true,
+      center: true
+    })
+  }
+}
+
+function getStream(url) {
+  return axios({
+    method: 'get',
+    url: 'https://api.zhaozeyu.top/v1/download',
+    params: {url: url},
+    responseType: 'blob'
+  }).then(res => {
+    return res.data
+  })
 }
 </script>
 
 <style scoped>
-.box-card {
-    width: 100%;
-    border-radius: 20px;
+.box {
+  width: 98%;
+  padding: 20px;
+  border: 1px gray solid;
+  border-radius: 20px;
 }
 
-.box-card,
-.box-message,
-.box-info {
-    margin: 20px 0;
+.box-message {
+  margin: 20px 0;
 }
 
 .alert {
-    margin: 5px 0;
+  margin: 10px 0;
 }
 
-.btn-group {
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.box-input {
+  margin-top: 20px;
+  max-width: 1000px;
 }
 
-.box-image {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
+.video {
+  max-width: 600px;
+  max-height: 400px;
+}
+
+.box-btn {
+  margin: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.images {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .video {
+    width: 350px;
+  }
 }
 </style>
