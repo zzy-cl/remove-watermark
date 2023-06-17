@@ -112,6 +112,7 @@ async function downloadFile(url, type) {
   if (type === 'video') {
     saveAs(fileBlob.value, `${Date.now()}.mp4`)
   } else if (type === 'cover') {
+    dataForm.value.cover = dataForm.value.cover.replace(/http:/, 'https:')
     saveAs(dataForm.value.cover, `${Date.now()}.png`)
   } else if (type === 'music') {
     saveAs(dataForm.value.music, `${Date.now()}.mp3`)
@@ -123,6 +124,7 @@ async function downloadFile(url, type) {
       }
     } else {
       for (let i = 0; i < imageList.value.length; i++) {
+        dataForm.value.images[i] = dataForm.value.images[i].replace(/http:/, 'https:')
         saveAs(dataForm.value.images[imageList.value[i]], `image${Date.now()}.png`)
       }
       imageList.value = []
