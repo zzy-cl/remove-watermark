@@ -152,7 +152,7 @@ function getStream(url) {
 .box {
   width: 100%;
   padding: 20px;
-  border: 1px gray solid;
+  border: 1px rgb(128, 128, 128) solid;
   border-radius: 20px;
 }
 
